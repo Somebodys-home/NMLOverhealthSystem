@@ -26,10 +26,11 @@ public final class NMLOverhealthSystem extends JavaPlugin {
             return;
         }
 
-        overhealthManager = new OverhealthManager(nmlPlayerStats);
-        overhealthManager.startOverhealthTracker();
+        overhealthManager = new OverhealthManager(this);
+        overhealthManager.ovehealthRegenServerTask();
 
         getServer().getPluginManager().registerEvents(new OverhealthListener(this), this);
+        getCommand("setMaxOverhealth").setExecutor(new SetMaxOverhealthCommand(this));
     }
 
     public NMLOverhealthSystem getInstance() {

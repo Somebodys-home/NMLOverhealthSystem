@@ -30,5 +30,5 @@ public class OverhealthChangeEvent extends Event {
 
     public double getNewOverhealth() {
         return newOverhealth;
-    } // the overhealth the player should have after the event
+    }
 }
