@@ -3,6 +3,7 @@ package io.github.NoOne.nMLOverhealthSystem;
 import io.github.NoOne.nMLPlayerStats.NMLPlayerStats;
 import io.github.NoOne.nMLPlayerStats.profileSystem.ProfileManager;
 import io.github.NoOne.nMLPlayerStats.statSystem.Stats;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -30,13 +31,18 @@ public class OverhealthListener implements Listener {
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
-            overhealthManager.add2OverhealthMap(player);
+            double prevOverhealth = profileManager.getPlayerProfile(player.getUniqueId()).getStats().getCurrentOverhealth();
 
-            Stats stats = profileManager.getPlayerProfile(player.getUniqueId()).getStats();
-            stats.setCurrentOverhealth(player.getAbsorptionAmount());
+            Bukkit.getScheduler().runTask(nmlPlayerStats, () -> {
+                double newOverhealth = player.getAbsorptionAmount();
+                Stats stats = profileManager.getPlayerProfile(player.getUniqueId()).getStats();
+
+                stats.setCurrentOverhealth(newOverhealth);
+                Bukkit.getPluginManager().callEvent(new OverhealthChangeEvent(player, prevOverhealth, newOverhealth));
+                overhealthManager.add2OverhealthMap(player);
+            });
         }
     }
-
 
     @EventHandler
     public void updateOverhealthVisually(OverhealthChangeEvent event) {
