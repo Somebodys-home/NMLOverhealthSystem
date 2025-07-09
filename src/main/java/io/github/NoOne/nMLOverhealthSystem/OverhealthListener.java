@@ -2,8 +2,10 @@ package io.github.NoOne.nMLOverhealthSystem;
 
 import io.github.NoOne.nMLPlayerStats.NMLPlayerStats;
 import io.github.NoOne.nMLPlayerStats.profileSystem.ProfileManager;
+import io.github.NoOne.nMLPlayerStats.statSystem.StatChangeEvent;
 import io.github.NoOne.nMLPlayerStats.statSystem.Stats;
 import org.bukkit.Bukkit;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -38,15 +40,24 @@ public class OverhealthListener implements Listener {
                 Stats stats = profileManager.getPlayerProfile(player.getUniqueId()).getStats();
 
                 stats.setCurrentOverhealth(newOverhealth);
-                Bukkit.getPluginManager().callEvent(new OverhealthChangeEvent(player, prevOverhealth, newOverhealth));
+                Bukkit.getPluginManager().callEvent(new StatChangeEvent(player, "overhealth"));
                 overhealthManager.add2OverhealthMap(player);
             });
         }
     }
 
     @EventHandler
-    public void updateOverhealthVisually(OverhealthChangeEvent event) {
-        Player player = event.getPlayer();
-        player.setAbsorptionAmount(event.getNewOverhealth());
+    public void updateOverhealthVisually(StatChangeEvent event) {
+        if (event.getStat().equals("maxoverhealth") || event.getStat().equals("overhealth")) {
+            Player player = event.getPlayer();
+            Stats stats = profileManager.getPlayerProfile(player.getUniqueId()).getStats();
+
+            // Update the max absorption cap so it can display above 4 hearts
+            player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION).setBaseValue(stats.getMaxOverhealth());
+
+            // Update the current visible overhealth
+            player.setAbsorptionAmount(stats.getCurrentOverhealth());
+        }
     }
+
 }

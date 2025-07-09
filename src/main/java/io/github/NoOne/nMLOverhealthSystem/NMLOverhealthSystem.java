@@ -30,7 +30,7 @@ public final class NMLOverhealthSystem extends JavaPlugin {
         overhealthManager.ovehealthRegenServerTask();
 
         getServer().getPluginManager().registerEvents(new OverhealthListener(this), this);
-        getCommand("setMaxOverhealth").setExecutor(new SetMaxOverhealthCommand(this));
+        getCommand("setMaxOverhealth").setExecutor(new SetMaxOverhealthCommand(instance));
     }
 
     public NMLOverhealthSystem getInstance() {

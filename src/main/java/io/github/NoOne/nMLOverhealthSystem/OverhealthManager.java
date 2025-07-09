@@ -2,12 +2,12 @@ package io.github.NoOne.nMLOverhealthSystem;
 
 import io.github.NoOne.nMLPlayerStats.profileSystem.Profile;
 import io.github.NoOne.nMLPlayerStats.profileSystem.ProfileManager;
+import io.github.NoOne.nMLPlayerStats.statSystem.StatChangeEvent;
 import io.github.NoOne.nMLPlayerStats.statSystem.Stats;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -63,11 +63,12 @@ public class OverhealthManager {
                     cancelRegenTask(uuid);
                     return;
                 }
-                                                              // number determines the seconds it takes to regen to max overhealth
+                // number determines the seconds it takes to regen to max overhealth
                 newOverhealth = Math.min(currentOverhealth + (maxOverhealth / 15), maxOverhealth);
                 stats.setCurrentOverhealth(newOverhealth);
 
-                Bukkit.getPluginManager().callEvent(new OverhealthChangeEvent(player, currentOverhealth, newOverhealth));
+                Bukkit.getPluginManager().callEvent(new StatChangeEvent(player, "overhealth"));
+                player.setAbsorptionAmount(newOverhealth);
 
                 if (newOverhealth >= maxOverhealth) {
                     cancelRegenTask(uuid);
@@ -93,6 +94,6 @@ public class OverhealthManager {
 
         profile.getStats().setCurrentOverhealth(currentOverhealth);
         player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION).setBaseValue(maxOverhealth);
-        Bukkit.getPluginManager().callEvent(new OverhealthChangeEvent(player, 0, currentOverhealth));
+        Bukkit.getPluginManager().callEvent(new StatChangeEvent(player, "overhealth"));
     }
 }
