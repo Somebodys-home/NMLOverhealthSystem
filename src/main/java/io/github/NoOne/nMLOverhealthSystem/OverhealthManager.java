@@ -63,12 +63,15 @@ public class OverhealthManager {
                     cancelRegenTask(uuid);
                     return;
                 }
-                // number determines the seconds it takes to regen to max overhealth
+
+                                                        // seconds to regen to max overhealth
                 newOverhealth = Math.min(currentOverhealth + (maxOverhealth / 15), maxOverhealth);
                 stats.setCurrentOverhealth(newOverhealth);
-
                 Bukkit.getPluginManager().callEvent(new StatChangeEvent(player, "overhealth"));
-                player.setAbsorptionAmount(newOverhealth);
+
+                if (newOverhealth > 0) {
+                    player.setAbsorptionAmount(newOverhealth);
+                }
 
                 if (newOverhealth >= maxOverhealth) {
                     cancelRegenTask(uuid);

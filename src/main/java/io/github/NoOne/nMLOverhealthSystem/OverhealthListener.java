@@ -2,6 +2,7 @@ package io.github.NoOne.nMLOverhealthSystem;
 
 import io.github.NoOne.nMLPlayerStats.NMLPlayerStats;
 import io.github.NoOne.nMLPlayerStats.profileSystem.ProfileManager;
+import io.github.NoOne.nMLPlayerStats.statSystem.ResetStatsEvent;
 import io.github.NoOne.nMLPlayerStats.statSystem.StatChangeEvent;
 import io.github.NoOne.nMLPlayerStats.statSystem.Stats;
 import org.bukkit.Bukkit;
@@ -56,8 +57,15 @@ public class OverhealthListener implements Listener {
             player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION).setBaseValue(stats.getMaxOverhealth());
 
             // Update the current visible overhealth
-            player.setAbsorptionAmount(stats.getCurrentOverhealth());
+            if (stats.getCurrentOverhealth() > 0) {
+                player.setAbsorptionAmount(stats.getCurrentOverhealth());
+            }
         }
     }
 
+    @EventHandler
+    public void resetOverhealth(ResetStatsEvent event) {
+        Player player = event.getPlayer();
+        player.setAbsorptionAmount(0);
+    }
 }
