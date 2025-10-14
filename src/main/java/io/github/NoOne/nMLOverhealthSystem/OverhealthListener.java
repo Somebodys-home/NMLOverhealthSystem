@@ -12,23 +12,23 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 public class OverhealthListener implements Listener {
-    private final NMLPlayerStats nmlPlayerStats;
+    private NMLOverhealthSystem nmlOverhealthSystem;
     private final ProfileManager profileManager;
     private final OverhealthManager overhealthManager;
 
     public OverhealthListener(NMLOverhealthSystem nmlOverhealthSystem) {
-        this.nmlPlayerStats = nmlOverhealthSystem.getNmlPlayerStats();
+        this.nmlOverhealthSystem = nmlOverhealthSystem;
         this.profileManager = nmlOverhealthSystem.getProfileManager();
         this.overhealthManager = nmlOverhealthSystem.getOverhealthManager();
     }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        overhealthManager.add2OverhealthMap(player);
-        overhealthManager.updateOverhealthFromProfile(player);
+        overhealthManager.add2OverhealthRegenMap(event.getPlayer());
     }
 
     @EventHandler
@@ -36,20 +36,21 @@ public class OverhealthListener implements Listener {
         if (event.getEntity() instanceof Player player) {
             double prevOverhealth = profileManager.getPlayerProfile(player.getUniqueId()).getStats().getCurrentOverhealth();
 
-            Bukkit.getScheduler().runTask(nmlPlayerStats, () -> {
-                double newOverhealth = player.getAbsorptionAmount();
-                Stats stats = profileManager.getPlayerProfile(player.getUniqueId()).getStats();
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                    double newOverhealth = player.getAbsorptionAmount();
 
-                stats.setCurrentOverhealth(newOverhealth);
-                Bukkit.getPluginManager().callEvent(new StatChangeEvent(player, "overhealth"));
-                overhealthManager.add2OverhealthMap(player);
-            });
+                    Bukkit.getPluginManager().callEvent(new StatChangeEvent(player, "currentoverhealth", newOverhealth - prevOverhealth));
+                    overhealthManager.add2OverhealthRegenMap(player);
+                }
+            }.runTaskLater(nmlOverhealthSystem, 1L);
         }
     }
 
     @EventHandler
     public void updateOverhealthVisually(StatChangeEvent event) {
-        if (event.getStat().equals("maxoverhealth") || event.getStat().equals("overhealth")) {
+        if (event.getStat().equals("maxoverhealth") || event.getStat().equals("currentoverhealth")) {
             Player player = event.getPlayer();
             Stats stats = profileManager.getPlayerProfile(player.getUniqueId()).getStats();
 
@@ -57,9 +58,7 @@ public class OverhealthListener implements Listener {
             player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION).setBaseValue(stats.getMaxOverhealth());
 
             // Update the current visible overhealth
-            if (stats.getCurrentOverhealth() > 0) {
-                player.setAbsorptionAmount(stats.getCurrentOverhealth());
-            }
+            player.setAbsorptionAmount(stats.getCurrentOverhealth());
         }
     }
 

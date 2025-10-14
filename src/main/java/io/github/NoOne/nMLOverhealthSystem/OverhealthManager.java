@@ -1,11 +1,9 @@
 package io.github.NoOne.nMLOverhealthSystem;
 
-import io.github.NoOne.nMLPlayerStats.profileSystem.Profile;
 import io.github.NoOne.nMLPlayerStats.profileSystem.ProfileManager;
 import io.github.NoOne.nMLPlayerStats.statSystem.StatChangeEvent;
 import io.github.NoOne.nMLPlayerStats.statSystem.Stats;
 import org.bukkit.Bukkit;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import java.util.HashMap;
@@ -23,12 +21,12 @@ public class OverhealthManager {
         profileManager = nmlOverhealthSystem.getProfileManager();
     }
 
-    public void add2OverhealthMap(Player player) {
+    public void add2OverhealthRegenMap(Player player) {
         overhealthRegenMap.put(player.getUniqueId(), System.currentTimeMillis());
         cancelRegenTask(player.getUniqueId());
     }
 
-    public void ovehealthRegenServerTask() {
+    public void overhealthRegenServerTask() {
         new BukkitRunnable() {
             @Override
             public void run() {
@@ -63,15 +61,9 @@ public class OverhealthManager {
                     cancelRegenTask(uuid);
                     return;
                 }
-
                                                         // seconds to regen to max overhealth
                 newOverhealth = Math.min(currentOverhealth + (maxOverhealth / 15), maxOverhealth);
-                stats.setCurrentOverhealth(newOverhealth);
-                Bukkit.getPluginManager().callEvent(new StatChangeEvent(player, "overhealth"));
-
-                if (newOverhealth > 0) {
-                    player.setAbsorptionAmount(newOverhealth);
-                }
+                Bukkit.getPluginManager().callEvent(new StatChangeEvent(player, "currentoverhealth", newOverhealth - currentOverhealth));
 
                 if (newOverhealth >= maxOverhealth) {
                     cancelRegenTask(uuid);
@@ -88,15 +80,5 @@ public class OverhealthManager {
             Bukkit.getScheduler().cancelTask(taskId);
             activeRegenTasks.remove(uuid);
         }
-    }
-
-    public void updateOverhealthFromProfile(Player player) {
-        Profile profile = profileManager.getPlayerProfile(player.getUniqueId());
-        double maxOverhealth = profile.getStats().getMaxOverhealth();
-        double currentOverhealth = Math.min(profile.getStats().getCurrentOverhealth(), maxOverhealth);
-
-        profile.getStats().setCurrentOverhealth(currentOverhealth);
-        player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION).setBaseValue(maxOverhealth);
-        Bukkit.getPluginManager().callEvent(new StatChangeEvent(player, "overhealth"));
     }
 }

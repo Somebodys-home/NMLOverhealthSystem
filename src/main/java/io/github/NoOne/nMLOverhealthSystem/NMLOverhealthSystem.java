@@ -7,38 +7,18 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class NMLOverhealthSystem extends JavaPlugin {
-    private NMLOverhealthSystem instance;
-    private NMLPlayerStats nmlPlayerStats;
     private ProfileManager profileManager;
     private OverhealthManager overhealthManager;
 
     @Override
     public void onEnable() {
-        instance = this;
-
-        Plugin plugin = Bukkit.getPluginManager().getPlugin("NMLPlayerStats");
-        if (plugin instanceof NMLPlayerStats statsPlugin) {
-            nmlPlayerStats = statsPlugin;
-            profileManager = nmlPlayerStats.getProfileManager();
-        } else {
-            getLogger().severe("Failed to find NMLPlayerStats! Disabling...");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
+        profileManager = JavaPlugin.getPlugin(NMLPlayerStats.class).getProfileManager();
 
         overhealthManager = new OverhealthManager(this);
-        overhealthManager.ovehealthRegenServerTask();
+        overhealthManager.overhealthRegenServerTask();
 
         getServer().getPluginManager().registerEvents(new OverhealthListener(this), this);
-        getCommand("setMaxOverhealth").setExecutor(new SetMaxOverhealthCommand(instance));
-    }
-
-    public NMLOverhealthSystem getInstance() {
-        return instance;
-    }
-
-    public NMLPlayerStats getNmlPlayerStats() {
-        return nmlPlayerStats;
+        getCommand("setMaxOverhealth").setExecutor(new SetMaxOverhealthCommand(this));
     }
 
     public ProfileManager getProfileManager() {
