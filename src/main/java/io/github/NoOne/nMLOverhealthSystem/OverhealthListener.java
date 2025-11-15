@@ -34,7 +34,7 @@ public class OverhealthListener implements Listener {
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
         if (event.getEntity() instanceof Player player) {
-            double prevOverhealth = profileManager.getPlayerProfile(player.getUniqueId()).getStats().getCurrentOverhealth();
+            double prevOverhealth = profileManager.getPlayerStats(player.getUniqueId()).getCurrentOverhealth();
 
             new BukkitRunnable() {
                 @Override
@@ -52,7 +52,7 @@ public class OverhealthListener implements Listener {
     public void updateOverhealthVisually(StatChangeEvent event) {
         if (event.getStat().equals("maxoverhealth") || event.getStat().equals("currentoverhealth")) {
             Player player = event.getPlayer();
-            Stats stats = profileManager.getPlayerProfile(player.getUniqueId()).getStats();
+            Stats stats = profileManager.getPlayerStats(player.getUniqueId());
 
             // Update the max absorption cap so it can display above 4 hearts
             player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION).setBaseValue(stats.getMaxOverhealth());

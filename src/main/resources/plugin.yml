@@ -1,11 +1,9 @@
 name: NMLOverhealthSystem
-version: '1.0-SNAPSHOT'
+version: '1.0'
 main: io.github.NoOne.nMLOverhealthSystem.NMLOverhealthSystem
 api-version: '1.21'
-authors: [ Gabriel Nicolas ]
 depend:
   - NMLPlayerStats
-description: Plugin for No Man's Land to manage the player's overhealth
 commands:
   setMaxOverhealth:
     description: Sets the user's max overhealth

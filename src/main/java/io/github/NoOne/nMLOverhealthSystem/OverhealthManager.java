@@ -52,7 +52,7 @@ public class OverhealthManager {
         int taskId = new BukkitRunnable() {
             @Override
             public void run() {
-                Stats stats = profileManager.getPlayerProfile(uuid).getStats();
+                Stats stats = profileManager.getPlayerStats(uuid);
                 double maxOverhealth = stats.getMaxOverhealth();
                 double currentOverhealth = stats.getCurrentOverhealth();
                 double newOverhealth;
