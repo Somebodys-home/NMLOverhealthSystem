@@ -20,7 +20,7 @@ public class SetMaxOverhealthCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player player) {
-            Stats stats = profileManager.getPlayerStats(player.getUniqueId());
+            Stats stats = profileManager.getPlayerProfile(player.getUniqueId()).getStats();
             double prevMaxOverhealth = stats.getMaxOverhealth();
             double newMaxOverhealth = Double.parseDouble(args[0]);
 
