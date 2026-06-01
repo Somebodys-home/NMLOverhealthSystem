@@ -55,7 +55,7 @@ public class OverhealthListener implements Listener {
             Stats stats = profileManager.getPlayerProfile(player.getUniqueId()).getStats();
 
             // Update the max absorption cap so it can display above 4 hearts
-            player.getAttribute(Attribute.GENERIC_MAX_ABSORPTION).setBaseValue(stats.getMaxOverhealth());
+            player.getAttribute(Attribute.MAX_ABSORPTION).setBaseValue(stats.getMaxOverhealth());
 
             // Update the current visible overhealth
             player.setAbsorptionAmount(stats.getCurrentOverhealth());

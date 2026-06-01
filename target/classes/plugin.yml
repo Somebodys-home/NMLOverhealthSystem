@@ -1,10 +1,6 @@
 name: NMLOverhealthSystem
 version: '1.0'
 main: io.github.NoOne.nMLOverhealthSystem.NMLOverhealthSystem
-api-version: '1.21'
+api-version: '21.6'
 depend:
   - NMLPlayerStats
-commands:
-  setMaxOverhealth:
-    description: Sets the user's max overhealth
-    usage: /<command>
